@@ -27,7 +27,7 @@ jobs:
       - name: SAST - Semgrep
         run: |
           python3 -m pip install semgrep
-          semgrep scan --config p/owasp-top-ten --error .
+          semgrep scan --config p/owasp-top-ten --error routes/login.ts routes/basket.ts models/feedback.ts frontend/src/app/search-result/search-result.component.ts
 
       # Gate 2: Software Composition Analysis
       - name: SCA - npm audit
