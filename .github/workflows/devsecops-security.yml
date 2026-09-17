@@ -51,5 +51,4 @@ jobs:
           format: table
           severity: CRITICAL,HIGH
           ignore-unfixed: true
-          ignore-unfixed: true
           exit-code: '1'
