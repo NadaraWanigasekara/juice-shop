@@ -37,7 +37,7 @@ jobs:
       # Gate 3: Secrets scanning
       - name: Secrets - Gitleaks
         run: |
-          docker run --rm -v "\/home/sandevni/devsecops-project/juice-shop:/repo" -w /repo zricethezav/gitleaks:latest git --redact --exit-code 1 --log-opts="--all 1618a611b173b4bf114028e6e02549950606e29d..HEAD" .
+          docker run --rm -v "$GITHUB_WORKSPACE:/repo" -w /repo zricethezav/gitleaks:latest git --redact --exit-code 1 --log-opts="--all 1618a611b173b4bf114028e6e02549950606e29d..HEAD" .
 
       # Build application container
       - name: Build Docker image
