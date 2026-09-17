@@ -50,5 +50,6 @@ jobs:
           image-ref: juice-shop:ci
           format: table
           severity: CRITICAL,HIGH
+          scanners: vuln
           ignore-unfixed: true
           exit-code: '1'
