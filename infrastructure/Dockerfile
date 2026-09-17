@@ -7,7 +7,7 @@ FROM node:24-bookworm-slim AS builder
 
 WORKDIR /juice-shop
 COPY package*.json ./
-RUN npm ci --ignore-scripts
+RUN npm install --ignore-scripts
 COPY . .
 COPY . .
 RUN mkdir -p /juice-shop/logs && chown node:node /juice-shop/logs
