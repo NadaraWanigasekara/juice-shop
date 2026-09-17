@@ -46,7 +46,7 @@ jobs:
 
       # Gate 4: Container scanning
       - name: Container scan - Trivy
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: juice-shop:ci
           format: table
