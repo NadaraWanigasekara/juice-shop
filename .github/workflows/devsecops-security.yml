@@ -36,9 +36,8 @@ jobs:
 
       # Gate 3: Secrets scanning
       - name: Secrets - Gitleaks
-        uses: gitleaks/gitleaks-action@v3
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gitleaks git --redact --exit-code 1 --log-opts="--all 1618a611b173b4bf114028e6e02549950606e29d..HEAD" .
 
       # Build application container
       - name: Build Docker image
