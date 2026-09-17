@@ -1,0 +1,54 @@
+name: DevSecOps Security Pipeline
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  security:
+    name: Security Gates
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      # Gate 1: SAST
+      - name: SAST - Semgrep
+        run: |
+          python3 -m pip install semgrep
+          semgrep scan --config p/owasp-top-ten --error .
+
+      # Gate 2: Software Composition Analysis
+      - name: SCA - npm audit
+        run: npm audit --audit-level=high
+
+      # Gate 3: Secrets scanning
+      - name: Secrets - Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Build application container
+      - name: Build Docker image
+        run: docker build -f infrastructure/Dockerfile -t juice-shop:ci .
+
+      # Gate 4: Container scanning
+      - name: Container scan - Trivy
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: juice-shop:ci
+          format: table
+          severity: CRITICAL,HIGH
+          exit-code: '1'

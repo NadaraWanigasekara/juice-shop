@@ -55,6 +55,9 @@ const FeedbackModelInit = (sequelize: Sequelize) => {
         type: DataTypes.INTEGER,
         allowNull: false,
         set (rating: number) {
+          if (Number(rating) < 1 || Number(rating) > 5) {
+            throw new Error('Rating must be between 1 and 5')
+          }
           this.setDataValue('rating', rating)
           challengeUtils.solveIf(challenges.zeroStarsChallenge, () => {
             return Number(rating) === 0

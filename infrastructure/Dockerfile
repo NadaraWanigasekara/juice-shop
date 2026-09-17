@@ -1,14 +1,18 @@
-FROM node:20.19.2-bookworm-slim AS base
+FROM node:24-bookworm-slim AS base
 RUN apt-get update && apt-get install -y --no-install-recommends \
     dumb-init=1.2.5-* \
     && rm -rf /var/lib/apt/lists/*
 
-FROM node:20.19.2-bookworm AS builder
+FROM node:24-bookworm-slim AS builder
 
 WORKDIR /juice-shop
 COPY package*.json ./
 RUN npm ci --ignore-scripts
 COPY . .
+COPY . .
+RUN mkdir -p /juice-shop/logs && chown node:node /juice-shop/logs
+RUN npm rebuild sqlite3
+RUN cd frontend && npm install --ignore-scripts
 RUN npm run build && npm prune --production
 
 FROM base AS production
