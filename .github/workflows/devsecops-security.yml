@@ -23,6 +23,12 @@ jobs:
       - name: Install dependencies
         run: npm install --ignore-scripts
 
+       # Secrets management verification
+      - name: Verify encrypted secret
+        env:
+          DEVSECOPS_TEST_SECRET: ${{ secrets.DEVSECOPS_TEST_SECRET }}
+        run: test -n "$DEVSECOPS_TEST_SECRET"
+
       # Gate 1: SAST
       - name: SAST - Semgrep
         run: |
