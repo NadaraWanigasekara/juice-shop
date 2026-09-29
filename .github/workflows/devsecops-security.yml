@@ -30,25 +30,32 @@ jobs:
         run: test -n "$DEVSECOPS_TEST_SECRET"
 
       # Gate 1: SAST
+      # SAST - Static Application Security Testing
+      # Checks selected application source files for insecure coding patterns.
       - name: SAST - Semgrep
         run: |
           python3 -m pip install semgrep
           semgrep scan --config p/owasp-top-ten --error routes/login.ts routes/basket.ts models/feedback.ts frontend/src/app/search-result/search-result.component.ts
 
       # Gate 2: Software Composition Analysis
+      # SCA - Software Composition Analysis
+      # Checks project dependencies for known security vulnerabilities.
       - name: SCA - npm audit
         run: npm audit --omit=dev --audit-level=critical
         continue-on-error: true
 
       # Gate 3: Secrets scanning
+      # Detects potential credentials, tokens and other sensitive values.
       - name: Secrets - Gitleaks
         run: |
           docker run --rm -v "$GITHUB_WORKSPACE:/repo" -w /repo zricethezav/gitleaks:latest dir --redact --exit-code 1 --report-format sarif --report-path=results.sarif .
       # Build application container
+      # Build the application container image for security scanning.
       - name: Build Docker image
         run: docker build -f infrastructure/Dockerfile -t juice-shop:ci .
 
       # Gate 4: Container scanning
+      # Checks the built image for HIGH and CRITICAL vulnerabilities.
       - name: Container scan - Trivy
         uses: aquasecurity/trivy-action@v0.36.0
         with:
